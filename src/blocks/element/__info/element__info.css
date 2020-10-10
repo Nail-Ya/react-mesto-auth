@@ -1,0 +1,8 @@
+.element__info {
+  height: 79px;
+  width: 282px;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  background: #FFFFFF;
+}

@@ -1,0 +1,19 @@
+.register__submit-button {
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  color: #000;
+  width: 358px;
+  height: 50px;
+  background: #fff;
+  border-radius: 2px;
+  display: block;
+  margin: 216px auto 0 auto;
+  outline: none;
+}
+
+.register__submit-button:hover {
+  background: rgba(256, 256, 256, .85);
+}
