@@ -23,4 +23,9 @@ npm start # собрать проект
 
 
 ## Планы по доработке
-* Реализовать backend для данного сервиса
+* Реализовать backend для данного сервиса:
+https://github.com/Nail-Ya/react-mesto-api-full
+
+
+## Ссылка на проект
+https://gss.students.nomoreparties.xyz/
