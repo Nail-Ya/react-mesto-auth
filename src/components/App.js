@@ -19,7 +19,6 @@ import successPopupIcon from './../images/successPopupIcon.svg';
 import errorPopupIcon from './../images/errorPopupIcon.svg';
 import loader from './../images/loaderPopup.svg';
 
-
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
@@ -47,27 +46,46 @@ function App() {
     popupMessage: ''
   });
 
+  const [token, setToken] = React.useState('');
+
   const history = useHistory();
+
+  // Хук для проверки токена при каждом монтировании компонента App
+  React.useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      auth.getContent(jwt)
+        .then((res) => {
+          if (res) {
+            setLoggedIn(true);
+            setUserEmail(res.email);
+            history.push('/');
+          }
+          setToken(jwt);
+        })
+        .catch(err => console.log(err));
+    }
+  }, [history]);
 
   // Получить данные пользователя
   React.useEffect(() => {
     setIsLoading(true);
     api
-      .getUserInfo()
+      .getUserInfo(token)
       .then(data => {
         setCurrentUser(data);
       })
-      .catch(err => console.log(`Ошибка: ${err}`))
+      .catch(err => console.log(`Ошибка: ${err.message}`))
       .finally(() => {
         setIsLoading(false);
       });
-  },[]);
+  },[token]);
 
   // Получить массив карточек из сервера
   React.useEffect(() => {
     setIsLoading(true);
     api
-      .getInitialCards()
+      .getInitialCards(token)
       .then(data => {
         setCards(data)
       })
@@ -75,7 +93,7 @@ function App() {
       .finally(() => {
         setIsLoading(false);
       });
-  },[]);
+  },[token]);
 
   // Закрытие попапов при клике на Esc и на overlay
   React.useEffect(() => {
@@ -154,7 +172,7 @@ function App() {
   function handleUpdateUser(userData) {
     setIsLoading(true);
     api
-      .updateUserInfo(userData)
+      .updateUserInfo(userData, token)
       .then((newUserData) => {
         setCurrentUser(newUserData)
       })
@@ -169,7 +187,7 @@ function App() {
   function handleUpdateAvatar(userData) {
     setIsLoading(true);
     api
-      .updateUserAvatar(userData)
+      .updateUserAvatar(userData, token)
       .then((newUserData) => {
         setCurrentUser(newUserData)
       })
@@ -183,10 +201,10 @@ function App() {
   // Поставить/убрать лайк карточке
   function handleCardLike(card) {
     // Проверить, есть ли уже лайк на этой карточке
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(i => i === currentUser._id);
     // Отправить запрос в API и получить обновлённые данные карточки
     api
-      .changeLikeCardStatus(card, !isLiked)
+      .changeLikeCardStatus(card, !isLiked, token)
       .then((newCard) => {
         // Сформировать новый массив на основе имеющегося, подставляя в него новую карточку
         const newCards = cards.map((item) => item._id === card._id ? newCard : item);
@@ -200,7 +218,7 @@ function App() {
   function handleCardDelete() {
     setIsLoading(true);
     api
-      .deletePhoto(cardToDelete)
+      .deletePhoto(cardToDelete, token)
       .then(() => {
         // Сформировать новый массив на основе имеющегося, без удаленной карточки
         const newCards = cards.filter((item) => item !== cardToDelete);
@@ -217,7 +235,7 @@ function App() {
   function handleAddPlaceSubmit(newCard) {
     setIsLoading(true);
     api
-      .addNewCard(newCard)
+      .addNewCard(newCard, token)
       .then((newCardData) => {
         setCards([newCardData, ...cards]);
       })
@@ -258,10 +276,11 @@ function App() {
         if (!data) {
           throw new Error('Что-то пошло не так!');
         }
-
+        setToken(data.token);
         auth.getContent(data.token)
           .then((res) => {
-            setUserEmail(res.data.email);
+            // console.log(res);
+            setUserEmail(res.email);
           })
           .catch(err => console.log(err));
 
@@ -282,22 +301,6 @@ function App() {
         setIsInfoTooltipOpen(true);
       })
   }
-
-  // Хук для проверки токена при каждом монтировании компонента App
-  React.useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt) {
-      auth.getContent(jwt)
-        .then((res) => {
-          if (res) {
-            setLoggedIn(true);
-            setUserEmail(res.data.email);
-            history.push('/');
-          }
-        })
-        .catch(err => console.log(err));
-    }
-  }, [history]);
 
   // Выход пользователя из системы
   function handleSignOut() {

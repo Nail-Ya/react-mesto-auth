@@ -1,9 +1,8 @@
-import {optionsApi} from './utils.js'
+import {BASE_URL} from './utils.js'
 
 class Api {
-  constructor(options) {
-    this._url = options.baseUrl;
-    this._headers = options.headers;
+  constructor() {
+    this._url = BASE_URL;
   }
 
   // метод для обработки ответов от сервера
@@ -11,32 +10,41 @@ class Api {
     if (res.ok) {
       return res.json();
     }
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(`${res.status}`);
   }
 
  // получение карточек из сервера
-  getInitialCards() {
-    return fetch(`${this._url}/cards`, {
-      method: 'GET',
-      headers: this._headers
-    })
-    .then(this._handleResponse)
-  }
+ getInitialCards(token) {
+  return fetch(`${this._url}/cards`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  .then(this._handleResponse)
+}
 
   // получение данных пользователя
-  getUserInfo() {
+  getUserInfo(token) {
     return fetch(`${this._url}/users/me`, {
       method: 'GET',
-      headers: this._headers
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
     })
     .then(this._handleResponse)
   }
 
   // обновление информации о пользователе
-  updateUserInfo(newUserInfo) {
+  updateUserInfo(newUserInfo, token) {
     return fetch(`${this._url}/users/me`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
         name: newUserInfo.name,
         about: newUserInfo.about
@@ -46,10 +54,13 @@ class Api {
   }
 
   // добавление новой карточки
-  addNewCard(newCard) {
+  addNewCard(newCard, token) {
     return fetch(`${this._url}/cards`, {
       method: 'POST',
-      headers: this._headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
         name: newCard.name,
         link: newCard.link
@@ -59,19 +70,25 @@ class Api {
   }
 
   // удаление фото
-  deletePhoto(card) {
+  deletePhoto(card, token) {
     return fetch(`${this._url}/cards/${card._id}`, {
       method: 'DELETE',
-      headers: this._headers
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
     })
     .then(this._handleResponse)
   }
 
   // обновление аватара профиля
-  updateUserAvatar(inputValue) {
+  updateUserAvatar(inputValue, token) {
     return fetch(`${this._url}/users/me/avatar`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
         avatar: inputValue.avatar
       })
@@ -80,13 +97,16 @@ class Api {
   }
 
   // поставить / убрать лайк: 2 разных метода запроса для удаления и постановки лайка
-  changeLikeCardStatus(card, like) {
-    return fetch(`${this._url}/cards/likes/${card._id}`, {
+  changeLikeCardStatus(card, like, token) {
+    return fetch(`${this._url}/cards/${card._id}/likes/`, {
       method: like ? 'PUT' : 'DELETE',
-      headers: this._headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
     })
     .then(this._handleResponse)
   }
 }
 
-export const api = new Api(optionsApi);
+export const api = new Api();

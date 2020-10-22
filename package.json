@@ -14,11 +14,13 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build", 
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "server-deploy": "npm run build && scp -r ./build/* nail@178.154.233.176:/home/nail/mesto-frontend" 
+
   },
   "eslintConfig": {
     "extends": "react-app"
