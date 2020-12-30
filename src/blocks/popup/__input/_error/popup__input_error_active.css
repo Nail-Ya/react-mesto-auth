@@ -6,7 +6,17 @@
   width: 358px;
   margin: 5px auto 0 auto;
   display: block;
-  position: absolute;
-  top: auto;
-  left: 36px;
+  margin: 5px auto 0;
+  width: 84%;
+}
+
+.popup__input-register_error_active {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #FF0000;
+  width: 358px;
+  margin: 5px auto 0 auto;
+  display: block;
+  margin: 5px auto 0;
 }

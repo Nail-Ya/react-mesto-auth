@@ -8,24 +8,26 @@ function EditAvatarPopup(props) {
     onUpdateAvatar,
     isLoading,
     buttonText,
-    buttonTextLoading
+    buttonTextLoading,
+    handleChange,
+    values,
+    error,
+    isFormValid,
   } = props;
-
-  const inputRef = React.useRef();
 
   // колбек для события onSubmit формы изменения аватара пользователя
   function handleSubmit(e) {
     e.preventDefault();
     // передать значения инпутов во внешний обработчик в App где идет работа с API
     onUpdateAvatar({
-      avatar: inputRef.current.value
+      avatar: values.avatar,
     });
   }
 
-  // убрать данные из инпута при повторном открытии попапа
-  React.useEffect(() => {
-    inputRef.current.value = '';
-  }, [isOpen]);
+ // отключение кнопки
+  const submitButton = `${
+    isFormValid ? 'popup__button' : 'popup__button popup__button_disabled'
+  }`;
 
   return(
     <PopupWithForm
@@ -37,19 +39,22 @@ function EditAvatarPopup(props) {
       <p className="popup__text">Обновить аватар</p>
       <input
         name="avatar"
-        ref={inputRef}
         id="avatar-input"
         type="url"
         className="popup__input popup__input_avatar_link"
         placeholder="Ссылка на картинку"
         required
+        onChange={handleChange}
+        value={values.avatar || ''}
       />
       <span
         id="avatar-input-error"
         className="popup__input_error_active"
-      />
+      >
+        {error.avatar || ''}
+      </span>
       <button
-        className="popup__button"
+        className={submitButton}
         type="submit">
           {
             isLoading ? buttonTextLoading : buttonText

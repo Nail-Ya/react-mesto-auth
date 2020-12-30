@@ -8,27 +8,27 @@ function AddPlacePopup(props) {
     onAddCard,
     isLoading,
     buttonText,
-    buttonTextLoading
+    buttonTextLoading,
+    handleChange,
+    values,
+    error,
+    isFormValid,
   } = props;
-
-  const nameRef = React.useRef();
-  const linkRef = React.useRef();
 
   // колбек для события onSubmit формы добавления карточки
   function handleSubmit(e) {
     e.preventDefault();
     // передать значения инпутов во внешний обработчик в App где идет работа с API
     onAddCard({
-      name: nameRef.current.value,
-      link: linkRef.current.value
+      name: values.cardName,
+      link: values.cardLink
     });
   }
 
-  // убрать данные из инпута при повторном открытии попапа
-  React.useEffect(() => {
-    nameRef.current.value = "";
-    linkRef.current.value = "";
-  }, [isOpen]);
+  // отключение кнопки
+  const submitButton = `${
+    isFormValid ? 'popup__button' : 'popup__button popup__button_disabled'
+  }`;
 
   return(
     <PopupWithForm
@@ -40,8 +40,7 @@ function AddPlacePopup(props) {
 
       <p className="popup__text">Новое место</p>
       <input
-        name="name"
-        ref={nameRef}
+        name="cardName"
         id="title-input"
         type="text"
         className="popup__input popup__input_place_name"
@@ -49,26 +48,33 @@ function AddPlacePopup(props) {
         required
         minLength="2"
         maxLength="30"
+        onChange={handleChange}
+        value={values.cardName || ''}
       />
       <span
         id="title-input-error"
         className="popup__input_error_active"
-      />
+      >
+        {error.cardName || ''}
+      </span>
       <input
-        name="link"
-        ref={linkRef}
+        name="cardLink"
         id="url-input"
         type="url"
         className="popup__input popup__input_place_link"
         placeholder="Ссылка на картинку"
         required
+        onChange={handleChange}
+        value={values.cardLink || ''}
       />
       <span
         id="url-input-error"
         className="popup__input_error_active"
-      />
+      >
+        {error.cardLink || ''}
+      </span>
       <button
-        className="popup__button"
+        className={submitButton}
         type="submit">
           {
             isLoading ? buttonTextLoading : buttonText

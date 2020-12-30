@@ -46,9 +46,31 @@ function App() {
     popupMessage: ''
   });
 
-  const [token, setToken] = React.useState('');
+  const [token, setToken] = React.useState(localStorage.getItem('jwt'));
 
   const history = useHistory();
+
+  // Валидация форм
+  // state переменные для валидации формы
+  const [values, setValues] = React.useState({});
+  const [isFormValid, setIsFormValid] = React.useState(false);
+  const [error, setError] = React.useState({});
+
+  // функция валидации формы: отслеживает инпуты и отображает ошибку
+  function handleChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    setValues({ ...values, [name]: value });
+    setError({ ...error, [name]: e.target.validationMessage });
+    setIsFormValid(e.target.closest('form').checkValidity());
+  }
+
+  // функция сбрасывает ошибки при закрытии попапа/сабмита формы
+  function resetForm() {
+    setValues({});
+    setIsFormValid(false);
+    setError({});
+  }
 
   // Хук для проверки токена при каждом монтировании компонента App
   React.useEffect(() => {
@@ -61,7 +83,6 @@ function App() {
             setUserEmail(res.email);
             history.push('/');
           }
-          setToken(jwt);
         })
         .catch(err => console.log(err));
     }
@@ -166,6 +187,7 @@ function App() {
       iconPath: loader,
       popupMessage: ''
     });
+    resetForm();
   }
 
   // Обновить данные пользователя
@@ -279,7 +301,6 @@ function App() {
         setToken(data.token);
         auth.getContent(data.token)
           .then((res) => {
-            // console.log(res);
             setUserEmail(res.email);
           })
           .catch(err => console.log(err));
@@ -330,10 +351,22 @@ function App() {
           />
 
           <Route path="/sign-in">
-            <Login onLogin={handleLogin} />
+            <Login
+              onLogin={handleLogin}
+              error={error}
+              values={values}
+              isFormValid={isFormValid}
+              handleChange={handleChange}
+            />
           </Route>
           <Route path="/sign-up">
-            <Register onRegister={handleUserRegister} />
+            <Register
+              onRegister={handleUserRegister}
+              error={error}
+              values={values}
+              isFormValid={isFormValid}
+              handleChange={handleChange}
+            />
           </Route>
           <Route>
             {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
@@ -354,6 +387,10 @@ function App() {
             isLoading={isLoading}
             buttonText={'Сохранить'}
             buttonTextLoading={'Сохранение...'}
+            error={error}
+            values={values}
+            isFormValid={isFormValid}
+            handleChange={handleChange}
           />
 
           <AddPlacePopup
@@ -363,6 +400,10 @@ function App() {
             isLoading={isLoading}
             buttonText={'Добавить'}
             buttonTextLoading={'Сохранение...'}
+            error={error}
+            values={values}
+            isFormValid={isFormValid}
+            handleChange={handleChange}
           />
 
           <EditAvatarPopup
@@ -372,6 +413,10 @@ function App() {
             isLoading={isLoading}
             buttonText={'Изменить'}
             buttonTextLoading={'Сохранение...'}
+            error={error}
+            values={values}
+            isFormValid={isFormValid}
+            handleChange={handleChange}
           />
 
           <ImagePopup
