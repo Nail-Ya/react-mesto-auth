@@ -80,7 +80,7 @@ function App() {
         .then((res) => {
           if (res) {
             setLoggedIn(true);
-            setUserEmail(res.data.email);
+            setUserEmail(res.email);
             history.push('/');
           }
         })
@@ -94,7 +94,7 @@ function App() {
     api
       .getUserInfo(token)
       .then(data => {
-        setCurrentUser(data.data);
+        setCurrentUser(data);
       })
       .catch(err => console.log(`Ошибка: ${err.message}`))
       .finally(() => {
@@ -223,7 +223,7 @@ function App() {
   // Поставить/убрать лайк карточке
   function handleCardLike(card) {
     // Проверить, есть ли уже лайк на этой карточке
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(i => i === currentUser._id);
     // Отправить запрос в API и получить обновлённые данные карточки
     api
       .changeLikeCardStatus(card, !isLiked, token)
@@ -272,7 +272,7 @@ function App() {
   function handleUserRegister(password, email) {
     return auth.register(password, email)
       .then((res) => {
-        if (res) {
+        if (res.data) {
           setIsInfoTooltipOpen(true);
           setPopupInfo({
             iconPath: successPopupIcon,
@@ -301,7 +301,7 @@ function App() {
         setToken(data.token);
         auth.getContent(data.token)
           .then((res) => {
-            setUserEmail(res.data.email);
+            setUserEmail(res.email);
           })
           .catch(err => console.log(err));
 

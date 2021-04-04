@@ -29,4 +29,4 @@ https://github.com/Nail-Ya/react-mesto-api-full
 
 
 ## Ссылка на проект
-https://react-app-eb618.firebaseapp.com/
+https://gss.students.nomoreparties.xyz/

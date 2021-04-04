@@ -47,7 +47,7 @@ function Register(props) {
           onChange={handleChange}
           value={values.registerPassword || ''}
           required
-          minLength='10'
+          minLength='5'
           maxLength='20'
         />
         <span className="popup__input-register_error_active">
