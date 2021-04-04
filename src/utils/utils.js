@@ -1,2 +1,2 @@
 // BASE_URL
-export const BASE_URL = 'https://www.api.gss.students.nomoreparties.xyz';
+export const BASE_URL = 'https://cool-inst.nomoredomains.icu';
